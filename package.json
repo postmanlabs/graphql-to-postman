@@ -1,0 +1,51 @@
+{
+  "name": "graphql-to-postman",
+  "version": "0.0.1",
+  "description": "Generates a Postman Collection from a GraphQL schema.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node npm/test.js",
+    "test-lint": "node npm/test-lint.js",
+    "test-unit": "node npm/test-unit.js"
+  },
+  "com_postman_plugin": {
+    "plugin_type": "importer",
+    "name": "GraphQL",
+    "source_format": "GRAPHQL",
+    "source_format_name": "GraphQL",
+    "sample_input": {
+      "type": "string",
+      "data": "type Rocket { id: ID! name: String type: String } type User { id: ID! email: String! trips: [Launch]! } type Mission { name: String missionPatch(size: PatchSize): String } enum PatchSize {        SMALL        LARGE      }      type Mutation {        # if false, booking trips failed -- check errors        bookTrips(launchIds: [ID]!): TripUpdateResponse!        # if false, cancellation failed -- check errors        cancelTrip(launchId: ID!): TripUpdateResponse!        login(email: String): String # login token      }      type TripUpdateResponse {        success: Boolean!        message: String        launches: [Launch]      }      type Launch {        id: ID!        site: String        mission: Mission        rocket: Rocket        isBooked: Boolean!      }      type Query {        launches: [Launch]!        launch(id: ID!): Launch        # Queries for the current user        me: User      }"
+    }
+  },
+  "keywords": [
+    "graphql",
+    "postman",
+    "collection"
+  ],
+  "author": "umeshp7",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "graphql": "14.5.8",
+    "lodash": "4.17.15",
+    "postman-collection": "3.5.5"
+  },
+  "devDependencies": {
+    "async": "3.1.0",
+    "chai": "4.2.0",
+    "chalk": "2.1.0",
+    "eslint": "4.18.2",
+    "eslint-plugin-jsdoc": "3.1.3",
+    "eslint-plugin-lodash": "2.4.5",
+    "eslint-plugin-mocha": "4.11.0",
+    "eslint-plugin-security": "1.4.0",
+    "istanbul": "0.4.5",
+    "jsdoc": "3.6.3",
+    "mocha": "6.2.2",
+    "nyc": "14.1.1",
+    "path": "0.12.7",
+    "pretty-ms": "5.1.0",
+    "recursive-readdir": "2.2.2",
+    "shelljs": "0.8.3"
+  }
+}
