@@ -105,5 +105,4 @@ describe('Converter tests', function () {
     });
   });
 
-
 });
