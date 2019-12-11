@@ -30,6 +30,10 @@
     "lodash": "4.17.15",
     "postman-collection": "3.5.5"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/postmanlabs/graphql-to-postman"
+  },
   "devDependencies": {
     "async": "3.1.0",
     "chai": "4.2.0",
