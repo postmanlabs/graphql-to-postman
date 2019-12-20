@@ -41,6 +41,10 @@ describe('Converter tests', function () {
           'mutation bookTrips ($launchIds: [ID]!) {\n    ' +
           'bookTrips (launchIds: $launchIds) {\n        success\n        message\n    }\n}'
         );
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.equal(
+          '{\n  "launchIds": [\n    0\n  ]\n}'
+        );
         return done();
       });
     });
@@ -62,6 +66,11 @@ describe('Converter tests', function () {
           'mutation bookTrips ($launchIds: [ID]!) {\n    ' +
           'bookTrips (launchIds: $launchIds) {\n        success\n        message\n    }\n}'
         );
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.equal(
+          '{\n  "launchIds": [\n    0\n  ]\n}'
+        );
+
         return done();
       });
     });
@@ -104,6 +113,5 @@ describe('Converter tests', function () {
       expect(value.result).to.be.equal(true);
     });
   });
-
 
 });
