@@ -112,6 +112,14 @@ describe('Converter tests', function () {
       expect(value).to.be.an('object');
       expect(value.result).to.be.equal(true);
     });
-  });
 
+    it('should return false for a graphql query', function () {
+      const value = validate({ type: 'string',
+        data: '{ hello }'
+      });
+
+      expect(value).to.be.an('object');
+      expect(value.result).to.be.equal(false);
+    });
+  });
 });
