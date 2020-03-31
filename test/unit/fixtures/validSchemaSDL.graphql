@@ -22,11 +22,14 @@ enum PatchSize {
 
 type Mutation {
   # if false, booking trips failed -- check errors
+  "Book trips by launch IDs"
   bookTrips(launchIds: [ID]!): TripUpdateResponse!
 
   # if false, cancellation failed -- check errors
+  "Cancel trip by launch ID"
   cancelTrip(launchId: ID!): TripUpdateResponse!
 
+  "Login using email"
   login(email: String): String # login token
 }
 
@@ -35,10 +38,13 @@ type TripUpdateResponse {
   message: String
   launches: [Launch]
 }
+
 type Query {
+  "Get all launches"
   launches: [Launch]!
+  "Get launch by ID"
   launch(id: ID!): Launch
-  # Queries for the current user
+  "Queries for the current user"
   me: User
 }
 
