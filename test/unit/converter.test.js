@@ -34,6 +34,16 @@ describe('Converter tests', function () {
         }
         const collection = result.output[0].data;
 
+        expect(collection.item[0].description).to.be.a('string');
+        expect(collection.item[0].description).to.be.equal('Mutations');
+        expect(collection.item[0].item[0].description).to.be.an('object');
+        expect(collection.item[0].item[0].description).to.eql(
+          { content: 'Book trips by launch IDs', type: 'text/markdown' }
+        );
+        expect(collection.item[0].item[0].request.description).to.eql(
+          collection.item[0].item[0].description
+        );
+
         expect(collection.item[0].item[0].request.body.mode).to.be.equal('graphql');
         expect(collection.item[0].item[0].request.body.graphql).to.be.an('object');
         expect(collection.item[0].item[0].request.body.graphql.query).to.be.a('string');
@@ -58,6 +68,16 @@ describe('Converter tests', function () {
           return done();
         }
         const collection = result.output[0].data;
+
+        expect(collection.item[0].description).to.be.a('string');
+        expect(collection.item[0].description).to.be.equal('Mutations');
+        expect(collection.item[0].item[0].description).to.be.an('object');
+        expect(collection.item[0].item[0].description).to.eql(
+          { content: 'Book trips by launch IDs', type: 'text/markdown' }
+        );
+        expect(collection.item[0].item[0].request.description).to.eql(
+          collection.item[0].item[0].description
+        );
 
         expect(collection.item[0].item[0].request.body.mode).to.be.equal('graphql');
         expect(collection.item[0].item[0].request.body.graphql).to.be.an('object');
