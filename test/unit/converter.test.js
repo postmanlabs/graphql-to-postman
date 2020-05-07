@@ -7,6 +7,7 @@ var converter = require('../../index'),
   validSchemaJson = require('./fixtures/validSchema.json'),
   invalidSchemaJson = require('./fixtures/invalidSchema.json'),
   validSchemaSDL = fs.readFileSync(path.join(__dirname, './fixtures/validSchemaSDL.graphql')).toString(),
+  issue10 = fs.readFileSync(path.join(__dirname, './fixtures/issue#10.graphql')).toString(),
   invalidSchemaSDL = fs.readFileSync(path.join(__dirname, './fixtures/invalidSchemaSDL.graphql')).toString(),
   expect = require('chai').expect;
 
@@ -70,6 +71,23 @@ describe('Converter tests', function () {
         expect(collection.item[0].item[0].request.body.graphql.variables).to.be.equal(
           '{\n  "launchIds": [\n    0\n  ]\n}'
         );
+
+        return done();
+      });
+    });
+
+    it('should not throw an error for schema containing an input type', function (done) {
+      convert({ type: 'string',
+        data: issue10
+      }, {}, function (error, result) {
+        if (error) {
+          expect.fail(null, null, error);
+          return done();
+        }
+        const collection = result.output[0].data;
+        expect(result.result).to.be.equal(true);
+        expect(collection.item[0].item[0].request.body.graphql.query).to.be.equal('mutation addUser ' +
+        '($input: UserInput) {\n    addUser (input: $input) {\n        id\n        name\n    }\n}');
 
         return done();
       });
