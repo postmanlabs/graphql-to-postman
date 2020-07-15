@@ -8,6 +8,7 @@ var converter = require('../../index'),
   invalidSchemaJson = require('./fixtures/invalidSchema.json'),
   validSchemaSDL = fs.readFileSync(path.join(__dirname, './fixtures/validSchemaSDL.graphql')).toString(),
   issue10 = fs.readFileSync(path.join(__dirname, './fixtures/issue#10.graphql')).toString(),
+  circularInput = fs.readFileSync(path.join(__dirname, './fixtures/circularInput.graphql')).toString(),
   invalidSchemaSDL = fs.readFileSync(path.join(__dirname, './fixtures/invalidSchemaSDL.graphql')).toString(),
   expect = require('chai').expect;
 
@@ -89,6 +90,19 @@ describe('Converter tests', function () {
         expect(collection.item[0].item[0].request.body.graphql.query).to.be.equal('mutation addUser ' +
         '($input: UserInput) {\n    addUser (input: $input) {\n        id\n        name\n    }\n}');
 
+        return done();
+      });
+    });
+
+    it('should successfully convert a schema with circular reference', function (done) {
+      convert({ type: 'string',
+        data: circularInput
+      }, {}, function (error, result) {
+        if (error) {
+          expect.fail(null, null, error);
+          return done();
+        }
+        expect(result.result).to.be.equal(true);
         return done();
       });
     });
