@@ -102,7 +102,12 @@ describe('Converter tests', function () {
           expect.fail(null, null, error);
           return done();
         }
+        const collection = result.output[0].data;
+
         expect(result.result).to.be.equal(true);
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.contain('"name": "",\n      "email": "",' +
+        '\n      "friend": "<Same as UserInput!>"');
+
         return done();
       });
     });
