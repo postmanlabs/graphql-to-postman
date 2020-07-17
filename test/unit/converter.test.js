@@ -50,6 +50,36 @@ describe('Converter tests', function () {
       });
     });
 
+    it('should generate a collection for a valid JSON schema using the response recieved from ' +
+    'introspection query result', function (done) {
+      const schema = {
+        data: validSchemaJson
+      };
+
+      convert({ type: 'string',
+        data: JSON.stringify(schema)
+      }, {}, function (error, result) {
+        if (error) {
+          expect.fail(null, null, error);
+          return done();
+        }
+        const collection = result.output[0].data;
+
+        expect(collection.item[0].item[0].request.body.mode).to.be.equal('graphql');
+        expect(collection.item[0].item[0].request.body.graphql).to.be.an('object');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.be.equal(
+          'mutation bookTrips ($launchIds: [ID]!) {\n    ' +
+          'bookTrips (launchIds: $launchIds) {\n        success\n        message\n    }\n}'
+        );
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.equal(
+          '{\n  "launchIds": [\n    0\n  ]\n}'
+        );
+        return done();
+      });
+    });
+
     it('should generate a collection for a valid SDL schema', function (done) {
       convert({ type: 'string',
         data: validSchemaSDL
@@ -99,6 +129,18 @@ describe('Converter tests', function () {
       const value = validate({ type: 'string',
         data: JSON.stringify(validSchemaJson)
       });
+
+      expect(value).to.be.an('object');
+      expect(value.result).to.be.equal(true);
+    });
+
+    it('should return true for a valid JSON schema from introspection query result', function () {
+      const schema = {
+          data: validSchemaJson
+        },
+        value = validate({ type: 'string',
+          data: JSON.stringify(schema)
+        });
 
       expect(value).to.be.an('object');
       expect(value.result).to.be.equal(true);
