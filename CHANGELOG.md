@@ -1,4 +1,7 @@
 # Changelog for graphql-to-postman
+### v0.0.6 (Jul 23, 2020)
+* Fix for circular reference input object types.
+* Fix for introspection query response type support.
 
 ### v0.0.5 (May 15, 2020)
 * Fix for - [#8429](https://github.com/postmanlabs/postman-app-support/issues/8429) [#10](https://github.com/postmanlabs/graphql-to-postman/issues/10) - Schemas with Input type will now be converted successfully.
