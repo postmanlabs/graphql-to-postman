@@ -1,4 +1,7 @@
 # Changelog for graphql-to-postman
+### v0.0.7 (Oct 23, 2020)
+* fix for - [#8863](https://github.com/postmanlabs/postman-app-support/issues/8863) Fixed an issue where custom name for type threw an error.
+
 ### v0.0.6 (Jul 23, 2020)
 * Fix for circular reference input object types.
 * Fix for introspection query response type support.
