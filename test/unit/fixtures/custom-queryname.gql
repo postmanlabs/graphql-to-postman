@@ -1,0 +1,23 @@
+schema {
+  query: RandomQueryName
+  mutation: RandomMutationName
+  subscription: RandomSubscriptionName
+}
+input UserInput {
+  name: String!
+  email: String!
+}
+type User {
+  id: String!
+  name: String
+}
+type RandomQueryName {
+  user (id: String): User
+}
+type RandomMutationName {
+  addUser (input: UserInput): User!
+}
+
+type RandomSubscriptionName {
+  addUser (input: UserInput): User!
+}

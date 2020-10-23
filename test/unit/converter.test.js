@@ -7,6 +7,7 @@ var converter = require('../../index'),
   validSchemaJson = require('./fixtures/validSchema.json'),
   invalidSchemaJson = require('./fixtures/invalidSchema.json'),
   validSchemaSDL = fs.readFileSync(path.join(__dirname, './fixtures/validSchemaSDL.graphql')).toString(),
+  customTypeNames = fs.readFileSync(path.join(__dirname, './fixtures/custom-queryname.gql')).toString(),
   issue10 = fs.readFileSync(path.join(__dirname, './fixtures/issue#10.graphql')).toString(),
   circularInput = fs.readFileSync(path.join(__dirname, './fixtures/circularInput.graphql')).toString(),
   invalidSchemaSDL = fs.readFileSync(path.join(__dirname, './fixtures/invalidSchemaSDL.graphql')).toString(),
@@ -65,7 +66,6 @@ describe('Converter tests', function () {
           return done();
         }
         const collection = result.output[0].data;
-
         expect(collection.item[0].item[0].request.body.mode).to.be.equal('graphql');
         expect(collection.item[0].item[0].request.body.graphql).to.be.an('object');
         expect(collection.item[0].item[0].request.body.graphql.query).to.be.a('string');
@@ -102,6 +102,38 @@ describe('Converter tests', function () {
         expect(collection.item[0].item[0].request.body.graphql.variables).to.be.equal(
           '{\n  "launchIds": [\n    0\n  ]\n}'
         );
+
+        return done();
+      });
+    });
+
+    it('should generate a collection for a valid SDL schema with custom query, mutation and' +
+    'subscription names', function (done) {
+      convert({ type: 'string',
+        data: customTypeNames
+      }, {}, function (error, result) {
+        if (error) {
+          expect.fail(null, null, error);
+          return done();
+        }
+        const collection = result.output[0].data;
+
+        expect(collection.item[0].item[0].request.body.mode).to.be.equal('graphql');
+        expect(collection.item[0].item[0].request.body.graphql).to.be.an('object');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.be.equal(
+          'mutation addUser ($input: UserInput) {\n    addUser (input: $input) {\n        id\n        name\n    }\n}'
+        );
+        expect(collection.item[1].item[0].request.body.graphql.query).to.be.equal(
+          'query user ($id: String) {\n    user (id: $id) {\n        id\n        name\n    }\n}'
+        );
+        expect(collection.item[2].item[0].request.body.graphql.query).to.be.equal(
+          'subscription addUser ($input: UserInput) {\n    addUser (input: $input) ' +
+          '{\n        id\n        name\n    }\n}'
+        );
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.a('string');
+        expect(collection.item[1].item[0].request.body.graphql.variables).to.be.a('string');
+        expect(collection.item[2].item[0].request.body.graphql.variables).to.be.a('string');
 
         return done();
       });
