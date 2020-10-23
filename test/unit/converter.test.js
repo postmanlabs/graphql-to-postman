@@ -117,7 +117,6 @@ describe('Converter tests', function () {
           return done();
         }
         const collection = result.output[0].data;
-        fs.writeFileSync('hello.json', JSON.stringify(collection, null, 2));
 
         expect(collection.item[0].item[0].request.body.mode).to.be.equal('graphql');
         expect(collection.item[0].item[0].request.body.graphql).to.be.an('object');
