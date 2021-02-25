@@ -232,5 +232,28 @@ describe('Converter tests', function () {
       expect(value).to.be.an('object');
       expect(value.result).to.be.equal(false);
     });
+
+    it('should return correct reason for a invalid SDL schema', function () {
+      const value = validate({ type: 'string',
+        data: `input UserInput {
+          name: String!
+          email: String!
+        }
+        type User {
+          id: String!
+          name: String
+        }
+        type RandomQueryName {
+          user (id: String): User
+        }
+        type RandomMutationName {
+          addUser (input: UserInput): User!
+        }`
+      });
+
+      expect(value).to.be.an('object');
+      expect(value.result).to.be.equal(false);
+      expect(value.reason).to.be.equal('Specification doesn\'t contain valid mutation, query or subscription type');
+    });
   });
 });
