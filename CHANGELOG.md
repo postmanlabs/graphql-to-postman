@@ -1,4 +1,8 @@
 # Changelog for graphql-to-postman
+
+### v0.0.8 (March 15, 2021)
+* Fixed issue where error shown was meaningless for incorrect GraphQL SDL.
+
 ### v0.0.7 (Oct 23, 2020)
 * fix for - [#8863](https://github.com/postmanlabs/postman-app-support/issues/8863) Fixed an issue where custom name for type threw an error.
 
