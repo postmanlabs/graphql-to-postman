@@ -1,5 +1,8 @@
 # Changelog for graphql-to-postman
 
+### v0.0.8 (April 9, 2021)
+* Added the support for changing stack depth if required.
+
 ### v0.0.8 (March 15, 2021)
 * Fixed issue where error shown was meaningless for incorrect GraphQL SDL.
 
