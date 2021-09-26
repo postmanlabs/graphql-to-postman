@@ -1,0 +1,51 @@
+type Rocket {
+  id: ID!
+  name: String
+  type: String
+}
+
+type User {
+  id: ID!
+  email: String!
+  trips: [Launch]!
+}
+
+type Mission {
+  name: String
+  missionPatch(size: PatchSize): String
+}
+
+enum PatchSize {
+  SMALL
+  LARGE
+}
+
+type TripUpdateResponse {
+  success: Boolean!
+  message: String
+  launches: [Launch]
+}
+type Query {
+  unifiedLaunch(unifiedLaunchId: String!): BestLaunchers!
+}
+
+union BestLaunchers = BlueOrigin | SpaceX
+
+type BlueOrigin {
+  newLaunchId(newLaunchId: String!): BestLaunchers!
+  validate: [String!]!
+  rockets: String!
+}
+
+type SpaceX {
+  reusableRockets: String!
+  dogeCoins: String!
+}
+
+type Launch {
+  id: ID!
+  site: String
+  mission: Mission
+  rocket: Rocket
+  isBooked: Boolean!
+}
