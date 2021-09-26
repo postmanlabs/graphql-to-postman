@@ -1,6 +1,9 @@
 # Changelog for graphql-to-postman
 
-### v0.0.8 (April 9, 2021)
+### v0.0.10 (Sept 27, 2021)
+* Fix for - [#9884](https://github.com/postmanlabs/postman-app-support/issues/9884) Fixed an issue with union types self referencing
+
+### v0.0.9 (April 9, 2021)
 * Added the support for changing stack depth if required.
 
 ### v0.0.8 (March 15, 2021)
