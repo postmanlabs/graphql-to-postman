@@ -7,6 +7,7 @@ var converter = require('../../index'),
   validSchemaJson = require('./fixtures/validSchema.json'),
   invalidSchemaJson = require('./fixtures/invalidSchema.json'),
   validSchemaSDL = fs.readFileSync(path.join(__dirname, './fixtures/validSchemaSDL.graphql')).toString(),
+  selfRefSchema = fs.readFileSync(path.join(__dirname, './fixtures/selfRefUnionTypeExample.graphql')).toString(),
   customTypeNames = fs.readFileSync(path.join(__dirname, './fixtures/custom-queryname.gql')).toString(),
   issue10 = fs.readFileSync(path.join(__dirname, './fixtures/issue#10.graphql')).toString(),
   circularInput = fs.readFileSync(path.join(__dirname, './fixtures/circularInput.graphql')).toString(),
@@ -102,6 +103,26 @@ describe('Converter tests', function () {
         expect(collection.item[0].item[0].request.body.graphql.variables).to.be.equal(
           '{\n  "launchIds": [\n    0\n  ]\n}'
         );
+
+        return done();
+      });
+    });
+
+    it('should generate a collection for a valid SDL schema with a union type self referencing', function (done) {
+      convert({ type: 'string',
+        data: selfRefSchema
+      }, {}, function (error, result) {
+        if (error) {
+          expect.fail(null, null, error);
+          return done();
+        }
+        const collection = result.output[0].data;
+        expect(collection.item[0].item[0].request.body.mode).to.be.equal('graphql');
+        expect(collection.item[0].item[0].request.body.graphql).to.be.an('object');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.contain('# self reference detected');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.contain('# skipping "newLaunchId"');
 
         return done();
       });
