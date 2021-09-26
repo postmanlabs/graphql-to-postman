@@ -1,5 +1,8 @@
 # Changelog for graphql-to-postman
 
+### v0.0.11 (Sept 27, 2021)
+* Fix for - [#24](https://github.com/postmanlabs/graphql-to-postman/issues/24) Fixed an issue where nesting was faulty.
+
 ### v0.0.10 (Sept 27, 2021)
 * Fix for - [#9884](https://github.com/postmanlabs/postman-app-support/issues/9884) Fixed an issue with union types self referencing
 
