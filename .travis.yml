@@ -1,7 +1,10 @@
+dist: focal
 language: node_js
 node_js:
-  - "7"
-  - "8"
-  - "9"
+  - "12"
+  - "14"
+  - "16"
+  - "17"
+  - "18"
   - "node"
   - "lts/*"
