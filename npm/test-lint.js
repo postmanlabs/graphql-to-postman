@@ -11,12 +11,10 @@ var chalk = require('chalk'),
      * @type {Array}
      */
   LINT_SOURCE_DIRS = [
-    './lib',
-    './bin',
-    './test',
-    './examples/*.js',
-    './npm/*.js',
-    './index.js'
+    './test/**/*.js',
+    './index.js',
+    './lib/**/*.js',
+    './npm/**/*.js'
   ];
 
 module.exports = function (exit) {

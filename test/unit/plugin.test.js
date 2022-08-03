@@ -3,7 +3,6 @@ var path = '../../',
   package = require(path),
   packageJson = require(path + '/package.json');
 
-/* global describe, it */
 describe(packageJson.name, function () {
   it('should contain all com_postman_plugin attributes', function (done) {
     expect(packageJson.com_postman_plugin).to.have.property('plugin_type');
