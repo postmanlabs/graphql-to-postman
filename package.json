@@ -28,7 +28,7 @@
   "dependencies": {
     "graphql": "14.5.8",
     "lodash": "4.17.19",
-    "postman-collection": "3.5.5"
+    "postman-collection": "3.6.11"
   },
   "repository": {
     "type": "git",
