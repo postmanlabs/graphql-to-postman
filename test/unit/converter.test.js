@@ -8,6 +8,9 @@ var converter = require('../../index'),
   validNestArgumentSchemaSDL = fs.readFileSync(
     path.join(__dirname, './fixtures/validNestedArgumentSchema.graphql')
   ).toString(),
+  invalidNestArgumentSchemaSDL = fs.readFileSync(
+    path.join(__dirname, './fixtures/invalidNestedArgumentSchema.graphql')
+  ).toString(),
   invalidSchemaJson = require('./fixtures/invalidSchema.json'),
   validSchemaSDL = fs.readFileSync(path.join(__dirname, './fixtures/validSchemaSDL.graphql')).toString(),
   selfRefSchema = fs.readFileSync(path.join(__dirname, './fixtures/selfRefUnionTypeExample.graphql')).toString(),
@@ -217,6 +220,23 @@ describe('Converter tests', function () {
         expect(collection.item[0].item[0].request.body.graphql.variables).to.be.equal(
           '{\n  "filterBy": [\n    [\n      [\n        ""\n      ]\n    ]\n  ]\n}'
         );
+
+        return done();
+      });
+    });
+
+    it('should throw an error for invalid SDL schema with nested list arguments', function (done) {
+      convert({ type: 'string',
+        data: invalidNestArgumentSchemaSDL
+      }, {}, function (error, result) {
+        if (error) {
+          expect.fail(null, null, error);
+          return done();
+        }
+        expect(result).to.eql({
+          reason: 'Invalid Data.',
+          result: false
+        });
 
         return done();
       });

@@ -1,0 +1,15 @@
+interface Node {
+  id: ID!
+}
+
+type Query {
+  node(id: ID!): Node
+}
+
+type Mutation {
+  nested: Nested
+}
+
+type Nested {
+  nested(filterBy: [[String]]]): String
+}
