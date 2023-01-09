@@ -5,6 +5,15 @@ var converter = require('../../index'),
   fs = require('fs'),
   path = require('path'),
   validSchemaJson = require('./fixtures/validSchema.json'),
+  validNestArgumentSchemaSDL = fs.readFileSync(
+    path.join(__dirname, './fixtures/validNestedArgumentSchema.graphql')
+  ).toString(),
+  validNestedSchema = fs.readFileSync(
+    path.join(__dirname, './fixtures/validNestedSchema.graphql')
+  ).toString(),
+  invalidNestArgumentSchemaSDL = fs.readFileSync(
+    path.join(__dirname, './fixtures/invalidNestedArgumentSchema.graphql')
+  ).toString(),
   invalidSchemaJson = require('./fixtures/invalidSchema.json'),
   validSchemaSDL = fs.readFileSync(path.join(__dirname, './fixtures/validSchemaSDL.graphql')).toString(),
   selfRefSchema = fs.readFileSync(path.join(__dirname, './fixtures/selfRefUnionTypeExample.graphql')).toString(),
@@ -190,6 +199,71 @@ describe('Converter tests', function () {
         expect(result.result).to.be.equal(true);
         expect(collection.item[0].item[0].request.body.graphql.variables).to.contain('"name": "",\n      "email": "",' +
         '\n      "friend": "<Same as UserInput!>"');
+
+        return done();
+      });
+    });
+
+    it('should generate a collection for a valid SDL schema with nested list arguments', function (done) {
+      convert({ type: 'string',
+        data: validNestArgumentSchemaSDL
+      }, {}, function (error, result) {
+        if (error) {
+          expect.fail(null, null, error);
+          return done();
+        }
+        const collection = result.output[0].data;
+
+        expect(collection.item[0].item[0].request.body.mode).to.be.equal('graphql');
+        expect(collection.item[0].item[0].request.body.graphql).to.be.an('object');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.be.equal('mutation nested' +
+          ' ($filterBy: [[[String]]]) {\n    nested {\n        nested (filterBy: $filterBy)\n    }\n}');
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.equal(
+          '{\n  "filterBy": [\n    [\n      [\n        ""\n      ]\n    ]\n  ]\n}'
+        );
+
+        return done();
+      });
+    });
+
+    it('should generate a collection for a valid SDL schema with user defined return type list', function (done) {
+      convert({ type: 'string',
+        data: validNestedSchema
+      }, {}, function (error, result) {
+        if (error) {
+          expect.fail(null, null, error);
+          return done();
+        }
+        const collection = result.output[0].data;
+
+        expect(collection.item[0].item[0].request.body.mode).to.be.equal('graphql');
+        expect(collection.item[0].item[0].request.body.graphql).to.be.an('object');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.be.equal('mutation ' +
+          'addUser ($User: [[User]]!) {\n    addUser (User: $User) {\n        id\n        name\n    }\n}');
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.equal(
+          '{\n  "User": [\n    [\n      ""\n    ]\n  ]\n}'
+        );
+
+        return done();
+      });
+    });
+
+    it('should throw an error for invalid SDL schema with nested list arguments', function (done) {
+      convert({ type: 'string',
+        data: invalidNestArgumentSchemaSDL
+      }, {}, function (error, result) {
+        if (error) {
+          expect.fail(null, null, error);
+          return done();
+        }
+        expect(result).to.eql({
+          reason: 'Invalid Data.',
+          result: false
+        });
 
         return done();
       });
