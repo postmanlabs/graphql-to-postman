@@ -1,4 +1,6 @@
 # Changelog for graphql-to-postman
+### v0.0.12 (January 9, 2023)
+* Fix for - [#10070](hhttps://github.com/postmanlabs/postman-app-support/issues/10070) Added support for nested lists.
 
 ### v0.0.11 (Sept 27, 2021)
 * Fix for - [#24](https://github.com/postmanlabs/graphql-to-postman/issues/24) Fixed an issue where nesting was faulty.
@@ -24,7 +26,7 @@
 
 #### v0.0.4 (April 29, 2020)
 * Sanitization of options.
-* Added a function for getting meta data. 
+* Added a function for getting meta data.
 
 #### v0.0.3 (March 26, 2020)
 * Fix for empty collection generation for certain queries.
