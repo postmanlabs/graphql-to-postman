@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node npm/test.js",
     "test-lint": "node npm/test-lint.js",
-    "test-unit": "node npm/test-unit.js"
+    "test-unit": "node npm/test-unit.js",
+    "release": "npm/release.sh"
   },
   "com_postman_plugin": {
     "plugin_type": "importer",
