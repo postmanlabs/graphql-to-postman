@@ -1,4 +1,9 @@
 # Changelog for graphql-to-postman
+
+### v0.0.12 (March 30, 2023)
+* Fixed issue where conversion failed with type error while resolving non-defined variables.
+* Added support for release script.
+
 ### v0.0.12 (January 9, 2023)
 * Fix for - [#10070](hhttps://github.com/postmanlabs/postman-app-support/issues/10070) Added support for nested lists.
 
