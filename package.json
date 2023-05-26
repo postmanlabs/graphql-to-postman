@@ -3,6 +3,9 @@
   "version": "0.0.13",
   "description": "Generates a Postman Collection from a GraphQL schema.",
   "main": "index.js",
+  "bin": {
+    "gql2postman": "./bin/gql2postman.js"
+  },
   "scripts": {
     "test": "node npm/test.js",
     "test-lint": "node npm/test-lint.js",
@@ -24,9 +27,13 @@
     "postman",
     "collection"
   ],
-  "author": "umeshp7",
+  "engines": {
+    "node": ">=16"
+  },
+  "author": "Postman Labs <help@postman.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "commander": "2.20.3",
     "graphql": "14.5.8",
     "lodash": "4.17.19",
     "postman-collection": "3.5.5"
