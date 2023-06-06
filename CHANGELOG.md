@@ -1,5 +1,9 @@
 # Changelog for graphql-to-postman
 
+#### v0.1.0 (June 06, 2023)
+* Added support for CLI usage to convert GraphQL definition to collection with custom depth.
+* Added maximum limit to depth allowed via usage of module APIs.
+
 ### v0.0.12 (March 30, 2023)
 * Fixed issue where conversion failed with type error while resolving non-defined variables.
 * Added support for release script.
