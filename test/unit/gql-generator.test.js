@@ -31,7 +31,7 @@ describe('gql-generator tests', function () {
     gqlSchemaObj._mutationType._fields = undefined;
 
     try {
-      schemaToQuery(gqlSchemaObj);
+      schemaToQuery(gqlSchemaObj, { depth: 5 });
     }
     catch (e) {
       expect(e).to.be.undefined;
