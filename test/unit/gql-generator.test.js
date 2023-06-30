@@ -22,4 +22,21 @@ describe('gql-generator tests', function () {
 
     done();
   });
+
+  it('should not throw type error for some of elements that are defined non-object in GQL schema', function (done) {
+    const data = validSchemaSDL,
+      gqlSchemaObj = graphql.buildSchema(data);
+
+    // Set specific property as null to test behaviour for non defined nodes.
+    gqlSchemaObj._mutationType._fields = undefined;
+
+    try {
+      schemaToQuery(gqlSchemaObj);
+    }
+    catch (e) {
+      expect(e).to.be.undefined;
+    }
+
+    done();
+  });
 });
