@@ -1,0 +1,30 @@
+# A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+scalar DateTime
+
+type Organization {
+  id: ID!
+  createdBy: User!
+  updatedBy: User!
+  name: String!
+  avatarUrl: String
+  owner: String!
+}
+
+# User
+type User {
+  id: ID!
+  organization: OrganizationOrStringUnion
+  idpId: String!
+  firstName: String!
+  lastName: String!
+  createdBy: UserOrStringUnion
+  updatedBy: UserOrStringUnion
+}
+
+union OrganizationOrStringUnion = Organization
+
+union UserOrStringUnion = User
+
+type Query {
+  User(id: String!): User!
+}
