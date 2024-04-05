@@ -1,5 +1,11 @@
 # Changelog for graphql-to-postman
 
+## [Unreleased]
+
+### Fixed
+
+-   Fixed an issue where GQL definition of having Union self refs past depth limit was failing with RangeError.
+
 #### v0.1.0 (June 06, 2023)
 * Added support for CLI usage to convert GraphQL definition to collection with custom depth.
 * Added maximum limit to depth allowed via usage of module APIs.
