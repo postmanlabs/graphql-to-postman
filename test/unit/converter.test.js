@@ -17,6 +17,9 @@ var converter = require('../../index'),
   invalidSchemaJson = require('./fixtures/invalidSchema.json'),
   validSchemaSDL = fs.readFileSync(path.join(__dirname, './fixtures/validSchemaSDL.graphql')).toString(),
   selfRefSchema = fs.readFileSync(path.join(__dirname, './fixtures/selfRefUnionTypeExample.graphql')).toString(),
+  seflRefDepthUnionSchema = fs.readFileSync(
+    path.join(__dirname, './fixtures/seflRefDepthUnionSchema.graphql')
+  ).toString(),
   customTypeNames = fs.readFileSync(path.join(__dirname, './fixtures/custom-queryname.gql')).toString(),
   issue10 = fs.readFileSync(path.join(__dirname, './fixtures/issue#10.graphql')).toString(),
   circularInput = fs.readFileSync(path.join(__dirname, './fixtures/circularInput.graphql')).toString(),
@@ -120,7 +123,7 @@ describe('Converter tests', function () {
     it('should generate a collection for a valid SDL schema with a union type self referencing', function (done) {
       convert({ type: 'string',
         data: selfRefSchema
-      }, {}, function (error, result) {
+      }, { depth: 3 }, function (error, result) {
         if (error) {
           expect.fail(null, null, error);
           return done();
@@ -264,6 +267,28 @@ describe('Converter tests', function () {
           reason: 'Invalid Data.',
           result: false
         });
+
+        return done();
+      });
+    });
+
+    it('should generate a collection for a valid SDL schema with a union type self referencing' +
+      ' and past allowed depth limit', function (done) {
+      convert({ type: 'string',
+        data: seflRefDepthUnionSchema
+      }, { depth: 3 }, function (error, result) {
+        if (error) {
+          expect.fail(null, null, error);
+          return done();
+        }
+        const collection = result.output[0].data;
+        expect(collection.item[0].item[0].request.body.mode).to.be.equal('graphql');
+        expect(collection.item[0].item[0].request.body.graphql).to.be.an('object');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.variables).to.be.a('string');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.contain('# self reference detected');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.contain('# skipping "createdBy"');
+        expect(collection.item[0].item[0].request.body.graphql.query).to.contain('# skipping "updatedBy"');
 
         return done();
       });
