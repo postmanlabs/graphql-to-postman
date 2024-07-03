@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [v0.2.0] - 2024-07-03
+
+### Updated
+
+-   Updated graphql version to v15.8.0.
+
 ## [v0.1.1] - 2024-04-05
 
 ### Fixed
@@ -68,6 +74,8 @@
 
 -   Base release
 
-[Unreleased]: https://github.com/postmanlabs/graphql-to-postman/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/postmanlabs/graphql-to-postman/compare/v0.2.0...HEAD
+
+[v0.2.0]: https://github.com/postmanlabs/graphql-to-postman/compare/v0.1.1...v0.2.0
 
 [v0.1.1]: https://github.com/postmanlabs/graphql-to-postman/compare/011f91a2fff94f02aeefcfc004a96777a62829bb...v0.1.1
