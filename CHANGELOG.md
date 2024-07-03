@@ -4,6 +4,10 @@
 
 ## [v0.2.0] - 2024-07-03
 
+### Updated
+
+-   Updated graphql version to v15.8.0.
+
 ## [v0.1.1] - 2024-04-05
 
 ### Fixed
