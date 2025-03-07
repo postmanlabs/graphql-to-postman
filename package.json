@@ -43,7 +43,7 @@
     "url": "https://github.com/postmanlabs/graphql-to-postman"
   },
   "devDependencies": {
-    "async": "3.1.0",
+    "async": "3.2.2",
     "chai": "4.2.0",
     "chalk": "2.1.0",
     "eslint": "4.18.2",
