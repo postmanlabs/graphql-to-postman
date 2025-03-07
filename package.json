@@ -1,6 +1,6 @@
 {
   "name": "graphql-to-postman",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Generates a Postman Collection from a GraphQL schema.",
   "main": "index.js",
   "bin": {
@@ -36,7 +36,7 @@
     "commander": "2.20.3",
     "graphql": "15.8.0",
     "lodash": "4.17.19",
-    "postman-collection": "^4.4.0"
+    "postman-collection": "^5.0.0"
   },
   "repository": {
     "type": "git",
