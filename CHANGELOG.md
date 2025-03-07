@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [v1.0.0] - 2025-03-07
+
 ## [v0.3.0] - 2024-07-10
 
 ### Chore
@@ -80,7 +82,9 @@
 
 -   Base release
 
-[Unreleased]: https://github.com/postmanlabs/graphql-to-postman/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/postmanlabs/graphql-to-postman/compare/v1.0.0...HEAD
+
+[v1.0.0]: https://github.com/postmanlabs/graphql-to-postman/compare/v0.3.0...v1.0.0
 
 [v0.3.0]: https://github.com/postmanlabs/graphql-to-postman/compare/v0.2.0...v0.3.0
 
