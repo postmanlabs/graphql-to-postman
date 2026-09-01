@@ -15,7 +15,7 @@
         "fields": [
           {
             "name": "launches",
-            "description": null,
+            "description": "Get all launches",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -35,7 +35,7 @@
           },
           {
             "name": "launch",
-            "description": null,
+            "description": "Get launch by ID",
             "args": [
               {
                 "name": "id",
@@ -62,7 +62,7 @@
           },
           {
             "name": "me",
-            "description": null,
+            "description": "Queries for the current user",
             "args": [],
             "type": {
               "kind": "OBJECT",
@@ -377,7 +377,7 @@
         "fields": [
           {
             "name": "bookTrips",
-            "description": null,
+            "description": "Book trips by launch IDs",
             "args": [
               {
                 "name": "launchIds",
@@ -412,7 +412,7 @@
           },
           {
             "name": "cancelTrip",
-            "description": null,
+            "description": "Cancel trip by launch ID",
             "args": [
               {
                 "name": "launchId",
@@ -443,7 +443,7 @@
           },
           {
             "name": "login",
-            "description": null,
+            "description": "Login using email",
             "args": [
               {
                 "name": "email",
