@@ -1,0 +1,33 @@
+
+# This workflow takes care of Syncing local changes to Project Workspace (cloud)
+name: Publish Changes to Postman Cloud
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  publish-changes:
+    name: Publish Changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Postman CLI
+        run: curl -o- "https://dl-cli.pstmn.io/install/unix.sh" | sh
+
+      - name: Verify Postman CLI version
+        run: postman --version
+
+      - name: Login to Postman
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+        run: postman login --with-api-key "$POSTMAN_API_KEY"
+
+      - name: Publish changes to Cloud
+        run: postman workspace push -y --report-events
