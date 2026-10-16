@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [v1.0.1] - 2026-10-16
+
 ### Chore
 
 -   Updated lodash and postman-collection to fix vulnerable dependencies.
@@ -11,7 +13,7 @@
 
 ### Breaking Changes
 
-- Drop support for node < v18.
+-   Drop support for node &lt; v18.
 
 ## [v0.3.0] - 2024-07-10
 
@@ -91,7 +93,9 @@
 
 -   Base release
 
-[Unreleased]: https://github.com/postmanlabs/graphql-to-postman/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/postmanlabs/graphql-to-postman/compare/v1.0.1...HEAD
+
+[v1.0.1]: https://github.com/postmanlabs/graphql-to-postman/compare/v1.0.0...v1.0.1
 
 [v1.0.0]: https://github.com/postmanlabs/graphql-to-postman/compare/v0.3.0...v1.0.0
 
