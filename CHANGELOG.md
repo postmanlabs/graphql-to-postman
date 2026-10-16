@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Chore
+
+-   Updated lodash and postman-collection to fix vulnerable dependencies.
+-   Hardened CI workflows by adding job timeouts and setting `persist-credentials: false` on checkout.
+
 ## [v1.0.0] - 2025-03-07
 
 ### Breaking Changes
