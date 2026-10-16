@@ -218,3 +218,44 @@ The validate function is synchronous and returns a status object which conforms 
 - `result` - true if the data is valid GraphQL and can be passed to the convert function
 
 - `reason` - Provides a reason for an unsuccessful validation of the specification
+
+## 🚀 Releasing
+
+Releases are cut from `develop` and published to npm via GitHub Actions. Do **not** use `npm run release` / `npm/release.sh` or publish from your laptop.
+
+### 1. Prepare changelog on `develop`
+
+Add release notes under `## [Unreleased]` in `CHANGELOG.md` (open a PR to `develop`).
+
+### 2. Draft the release
+
+1. Go to **Actions → Draft new release → Run workflow**
+2. Use branch **`develop`**
+3. Enter a version that starts with `v` (e.g. `v1.2.3`, or `v1.2.3-rc.0` for a prerelease)
+
+This creates a `release/vX.Y.Z` branch, bumps `package.json`, updates the changelog, and opens PRs to **`master`** and **`develop`**.
+
+### 3. Merge both release PRs
+
+Review and merge the PRs to `master` and `develop`.
+
+### 4. Push a signed tag (publishes to npm)
+
+Tagging must be done from the merged `master` commit. Tags must be **annotated and signed** (GPG or SSH signing key registered on GitHub).
+
+```bash
+git checkout master
+git pull origin master
+
+git tag -s vX.Y.Z -m "Release vX.Y.Z"
+git push origin vX.Y.Z
+```
+
+Pushing the tag triggers **NPM Release**, which runs the tests and publishes `graphql-to-postman` via OIDC trusted publishing.
+
+- Stable versions (e.g. `v1.2.3`) publish to the `latest` dist-tag
+- Prereleases (e.g. `v1.2.3-rc.0`) publish to the `next` dist-tag
+
+### 5. Retry / dry-run (optional)
+
+If a publish fails transiently, use **Actions → NPM Release → Run workflow** with the existing tag. Set `dry_run: true` to run checks without publishing (does not exercise OIDC).

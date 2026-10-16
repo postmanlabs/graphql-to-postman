@@ -1,0 +1,179 @@
+# Publishes graphql-to-postman to npm. ONE package, ONE version.
+#
+# Publishing is gated on a signed git tag, so a release is: merge the release PR
+# into master, tag that merge commit with a signed tag, push the tag. There is no
+# npm account and no token in the publish path -- authentication is OIDC trusted
+# publishing.
+#
+# Modelled on the postmanlabs/gh-security-scan-workflow security-npm-publish.yml
+# reusable workflow. That workflow lives in an internal repo, which a public repo
+# like this one cannot call, so the same guards are inlined here.
+#
+# IMPORTANT: this file's NAME is bound to the npm Trusted Publisher config of the
+# package. Renaming it breaks publishing until npm is updated -- ask AppSec in
+# #security to repoint it.
+
+name: NPM Release
+
+on:
+  # The release trigger. Pushing the tag IS the release.
+  push:
+    tags:
+      - 'v*.*.*'
+
+  # The retry and diagnostic trigger. A tag cannot be re-pushed once it exists, so
+  # if a run dies on a transient failure (registry blip, runner flake, npm 5xx) this
+  # is the way to drive that exact version again. Re-running is safe: a version
+  # already on the registry is skipped with a warning.
+  #
+  # It is also the only place dry_run is reachable. dry_run cannot rehearse a NEW
+  # version -- the tag must already be in origin, and pushing it is the release. To
+  # de-risk a release, ship an X.Y.Z-rc.0 instead; it resolves to the `next`
+  # dist-tag, so `latest` is untouched.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to publish, e.g. v1.2.3. Must already exist in origin, annotated and signed.'
+        required: true
+        type: string
+      dry_run:
+        description: 'Run the checks against a tag that ALREADY EXISTS, without publishing. Skips the signed-tag and master-branch gates, and does not exercise OIDC.'
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  id-token: write       # required for OIDC publishing
+
+concurrency:
+  group: npm-release-${{ github.ref_type == 'tag' && github.ref_name || inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      # Never interpolate the tag directly into run blocks: ref names may contain
+      # shell metacharacters. Always reference it as "$TAG".
+      TAG: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag }}
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+
+    steps:
+      - name: Validate tag
+        run: |
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.-]+)?$ ]]; then
+            echo "::error::tag must look like vX.Y.Z or vX.Y.Z-prerelease (got '$TAG')"
+            exit 1
+          fi
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # full history, needed to prove ancestry
+          persist-credentials: false
+
+      - name: Check out the exact tag commit
+        run: |
+          git fetch --tags --force --prune
+          git rev-parse -q --verify "refs/tags/$TAG" >/dev/null \
+            || { echo "::error::Tag $TAG not found in origin"; exit 1; }
+          git checkout --force --detach "$(git rev-parse "$TAG^{commit}")"
+
+      - name: Compute metadata and enforce version = tag
+        id: meta
+        run: |
+          VERSION="${TAG#v}"
+          NAME=$(jq -r '.name' package.json)
+          PKG_VERSION=$(jq -r '.version' package.json)
+
+          if [[ "$VERSION" != "$PKG_VERSION" ]]; then
+            echo "::error::package.json version ($PKG_VERSION) does not match tag ($VERSION)"
+            exit 1
+          fi
+
+          # Pre-releases never move `latest`: X.Y.Z-rc.N -> next, X.Y.Z-beta.N -> beta.
+          if [[ "$VERSION" == *-* ]]; then
+            PRE_RELEASE="${VERSION#*-}"
+            PRE_RELEASE="${PRE_RELEASE%%.*}"
+            [[ "$PRE_RELEASE" == "rc" ]] && DIST_TAG="next" || DIST_TAG="$PRE_RELEASE"
+          else
+            DIST_TAG="latest"
+          fi
+
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "dist_tag=$DIST_TAG" >> "$GITHUB_OUTPUT"
+          echo "Publishing $NAME@$VERSION to dist-tag '$DIST_TAG'"
+
+      - name: Require annotated & signed tag (latest only)
+        if: ${{ steps.meta.outputs.dist_tag == 'latest' && env.DRY_RUN != 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [[ "$(git cat-file -t "$TAG")" != "tag" ]]; then
+            echo "::error::Tag $TAG is not annotated (lightweight tags are not allowed)"
+            echo "Create a signed, annotated tag with: git tag -s $TAG -m 'Release $TAG'"
+            exit 1
+          fi
+
+          read -r VERIFIED REASON < <(gh api "/repos/$REPO/git/tags/$(git rev-parse "$TAG")" \
+            --jq '[.verification.verified, .verification.reason] | @tsv')
+          if [[ "$VERIFIED" != "true" ]]; then
+            echo "::error::Tag $TAG is not cryptographically signed & verified (reason: $REASON)"
+            echo "Sign the tag with: git tag -s $TAG -m 'Release $TAG'"
+            echo "Your GPG or SSH signing key must be registered on GitHub as a SIGNING key."
+            exit 1
+          fi
+          echo "✅ Tag is annotated and signature verified by GitHub (reason: $REASON)"
+
+      - name: Prove tag commit is contained in master (latest only)
+        if: ${{ steps.meta.outputs.dist_tag == 'latest' && env.DRY_RUN != 'true' }}
+        run: |
+          git fetch origin "+refs/heads/master:refs/remotes/origin/master"
+          if git merge-base --is-ancestor "$(git rev-parse "$TAG^{commit}")" origin/master; then
+            echo "✅ Tag commit is contained in origin/master"
+          else
+            echo "::error::Tag $TAG is not on master. Tag the merged release commit on master."
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Upgrade npm for OIDC trusted publishing (needs npm >= 11.5.1)
+        run: npm install -g npm@11
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Skip publish if the version is already published
+        id: published
+        env:
+          NAME: ${{ steps.meta.outputs.name }}
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          if [[ -n "$(npm view "$NAME@$VERSION" version 2>/dev/null)" ]]; then
+            echo "::warning::$NAME@$VERSION is already on the registry; skipping publish."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to npm
+        if: ${{ steps.published.outputs.skip != 'true' }}
+        env:
+          DIST_TAG: ${{ steps.meta.outputs.dist_tag }}
+        run: |
+          if [[ "$DRY_RUN" == "true" ]]; then
+            npm publish --tag "$DIST_TAG" --dry-run
+          else
+            npm publish --tag "$DIST_TAG"   # authenticates via OIDC; provenance added automatically
+          fi
